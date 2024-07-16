@@ -2,54 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-enum X_SECURITY_CATEGORY {
-  NONE,
-  BLACK_LIST,
-  GRAY_LIST,
-  WHITE_LIST
-}
-
-enum CRYPTO_ADDR_SUBTYPE {
-  NONE,
-  ETH,
-  ETC,
-  EOS,
-  BTC,
-  BCH,
-  ALGO,
-  LTC,
-  DASH,
-  ZEC,
-  XMR,
-  NEO,
-  XRP,
-  NA,
-  KLAY,
-  TRON,
-  XLM,
-  BNB,
-  ADA,
-  DOGE,
-  BSC,
-  SOL,
-  POL,
-  FTM,
-  LUNC,
-  AVAX,
-  ARB,
-  OP
-}
-
-enum ADDR_SUBTYPE {
-  NONE,
-  URL,
-  EMAIL,
-  DOMAIN,
-  HOSTNAME,
-  IPV4,
-  OTHER
-}
-
 struct STIX_CRYPTO_ADDR {
   address x_pattern_value;
   string[] labels;
@@ -65,19 +17,26 @@ struct STIX_ADDR {
 }
 
 contract Uppsala {
-  address public admin;
+  address public admin; // recommended a multi-sig address
 
   mapping(address => STIX_CRYPTO_ADDR) private dataAddr;
   mapping(string => STIX_ADDR) private dataUrl;
+  mapping(address => bool) private users;
 
   modifier onlyAdmin() {
     require(msg.sender == admin, "Only admin can execute");
     _;
   }
 
+  modifier onlyUsers() {
+    require(users[msg.sender] == true, "Only registered users can call");
+    _;
+  }
+
   event SetAdmin(address);
   event SetAddrData(address);
   event SetUrlData(string);
+  event AddUser(address);
 
   constructor(address _admin) {
     require(_admin != address(0), "admin should be provided");
@@ -89,6 +48,13 @@ contract Uppsala {
 
     emit SetAdmin(admin);
   }
+
+  function addUser(address _user) public onlyAdmin {
+    users[_user] = true;
+
+    emit AddUser(_user);
+  }
+
 
   function checCryptokAddr(address _cryptoAddr) public view returns (STIX_CRYPTO_ADDR memory) {
     return dataAddr[_cryptoAddr];
