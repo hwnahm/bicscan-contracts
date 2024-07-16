@@ -9,33 +9,66 @@ enum X_SECURITY_CATEGORY {
   WHITE_LIST
 }
 
-enum X_SECURITY_SUBTYPE {
+enum CRYPTO_ADDR_SUBTYPE {
   NONE,
   ETH,
+  ETC,
+  EOS,
+  BTC,
+  BCH,
+  ALGO,
+  LTC,
+  DASH,
+  ZEC,
+  XMR,
+  NEO,
+  XRP,
+  NA,
   KLAY,
-  POL,
+  TRON,
+  XLM,
   BNB,
-  BSC
+  ADA,
+  DOGE,
+  BSC,
+  SOL,
+  POL,
+  FTM,
+  LUNC,
+  AVAX,
+  ARB,
+  OP
 }
 
-struct STIX_ADDR {
+enum ADDR_SUBTYPE {
+  NONE,
+  URL,
+  EMAIL,
+  DOMAIN,
+  HOSTNAME,
+  IPV4,
+  OTHER
+}
+
+struct STIX_CRYPTO_ADDR {
   address x_pattern_value;
   string[] labels;
   string category;
   string subType;
 }
 
-struct STIX_URL {
+struct STIX_ADDR {
   string x_pattern_value;
   string[] labels;
   string category;
+  string subType;
 }
 
 contract Uppsala {
   address public admin;
 
-  mapping(address => STIX_ADDR) private dataAddr;
-  mapping(string => STIX_URL) private dataUrl;
+  mapping(address => STIX_CRYPTO_ADDR) private dataAddr;
+  mapping(string => STIX_ADDR) private dataUrl;
 
   modifier onlyAdmin() {
     require(msg.sender == admin, "Only admin can execute");
@@ -57,50 +90,52 @@ contract Uppsala {
     emit SetAdmin(admin);
   }
 
-  function checkAddress(address _addr) public view returns (STIX_ADDR memory) {
-    return dataAddr[_addr];
+  function checCryptokAddr(address _cryptoAddr) public view returns (STIX_CRYPTO_ADDR memory) {
+    return dataAddr[_cryptoAddr];
   }
 
-  function checkUrl(string memory _url) public view returns (STIX_URL memory) {
-    return dataUrl[_url];
+  function checkAddr(string memory _addr) public view returns (STIX_ADDR memory) {
+    return dataUrl[_addr];
   }
 
-  function setAddrData(
-    address _addr,
+  function setCryptoAddrData(
+    address _cryptoAddr,
     string[] memory _labels,
     string memory _category,
     string memory _subType
   ) public onlyAdmin {
-    require(_addr != address(0), "address should be provided");
+    require(_cryptoAddr != address(0), "address should be provided");
     require(_labels.length != 0, "labels should be provided");
     require(bytes(_category).length != 0, "category should be provided");
     require(bytes(_subType).length != 0, "subType should be provided");
 
-    dataAddr[_addr] = STIX_ADDR({
+    dataAddr[_cryptoAddr] = STIX_CRYPTO_ADDR({
+      x_pattern_value: _cryptoAddr,
+      labels: _labels,
+      category: _category,
+      subType: _subType
+    });
+
+    emit SetAddrData(_cryptoAddr);
+  }
+
+  function setAddrData(
+    string memory _addr,
+    string[] memory _labels,
+    string memory _category,
+    string memory _subType
+  ) public onlyAdmin {
+    require(bytes(_addr).length != 0, "url should be provided");
+    require(_labels.length != 0, "labels should be provided");
+    require(bytes(_category).length != 0, "category should be provided");
+
+    dataUrl[_addr] = STIX_ADDR({
       x_pattern_value: _addr,
       labels: _labels,
       category: _category,
       subType: _subType
     });
 
-    emit SetAddrData(_addr);
-  }
-
-  function setUrlData(
-    string memory _url,
-    string[] memory _labels,
-    string memory _category
-  ) public onlyAdmin {
-    require(bytes(_url).length != 0, "url should be provided");
-    require(_labels.length != 0, "labels should be provided");
-    require(bytes(_category).length != 0, "category should be provided");
-
-    dataUrl[_url] = STIX_URL({
-      x_pattern_value: _url,
-      labels: _labels,
-      category: _category
-    });
-
-    emit SetUrlData(_url);
+    emit SetUrlData(_addr);
   }
 }
