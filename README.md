@@ -9,3 +9,4 @@ yarn
 yarn compile
 yarn deploy:sepolia
 ```
+When you re-deploy onto a chain remove the related chain folder in deployments folder.
