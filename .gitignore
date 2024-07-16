@@ -15,3 +15,16 @@ node_modules
 
 # Hardhat Ignition default folder for deployments against a local node
 ignition/deployments/chain-31337
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/.gitignore
+/.idea/bicscan.iml
+/.idea/material_theme_project_new.xml
+/.idea/modules.xml
+/.idea/prettier.xml
+/.idea/vcs.xml
+/ignition/deployments/chain-11155111/artifacts/UppsalaModule#Uppsala.dbg.json
+/ignition/deployments/chain-11155111/artifacts/UppsalaModule#Uppsala.json
+/ignition/deployments/chain-11155111/build-info/edd5cbee1d3d749f2b870f6edde29674.json
+/ignition/deployments/chain-11155111/deployed_addresses.json
+/ignition/deployments/chain-11155111/journal.jsonl
