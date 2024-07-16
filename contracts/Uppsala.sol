@@ -42,7 +42,9 @@ contract Uppsala {
     _;
   }
 
-  event SetAdmin(address admin);
+  event SetAdmin(address);
+  event SetAddrData(address);
+  event SetUrlData(string);
 
   constructor(address _admin) {
     require(_admin != address(0), "admin should be provided");
@@ -80,6 +82,8 @@ contract Uppsala {
       category: _category,
       subType: _subType
     });
+
+    emit SetAddrData(_addr);
   }
 
   function setUrlData(
@@ -96,5 +100,7 @@ contract Uppsala {
       labels: _labels,
       category: _category
     });
+
+    emit SetUrlData(_url);
   }
 }
