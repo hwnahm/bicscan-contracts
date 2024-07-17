@@ -62,7 +62,7 @@ contract UppsalaUpgradeableV2 is Initializable, OwnableUpgradeable {
     }
 
 
-    function checCryptokAddr(address _cryptoAddr) public view returns (STIX_CRYPTO_ADDR memory) {
+    function checkCryptoAddr(address _cryptoAddr) public view returns (STIX_CRYPTO_ADDR memory) {
         return dataAddr[_cryptoAddr];
     }
 

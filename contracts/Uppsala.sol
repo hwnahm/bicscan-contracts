@@ -56,11 +56,11 @@ contract Uppsala {
   }
 
 
-  function checCryptokAddr(address _cryptoAddr) public view returns (STIX_CRYPTO_ADDR memory) {
+  function checkCryptoAddr(address _cryptoAddr) public view onlyUsers returns (STIX_CRYPTO_ADDR memory) {
     return dataAddr[_cryptoAddr];
   }
 
-  function checkAddr(string memory _addr) public view returns (STIX_ADDR memory) {
+  function checkAddr(string memory _addr) public view onlyUsers returns (STIX_ADDR memory) {
     return dataUrl[_addr];
   }
 
