@@ -16,6 +16,42 @@ struct STIX_ADDR {
   string subType;
 }
 
+struct SignatureExpanded {
+  uint8 v;
+  bytes32 r;
+  bytes32 s;
+}
+
+// Returns the decimal string representation of value
+function itoa(uint value) pure returns (string memory) {
+  // Count the length of the decimal string representation
+  uint length = 1;
+  uint v = value;
+  while ((v /= 10) != 0) {
+    length++;
+  }
+
+  // Allocated enough bytes
+  bytes memory result = new bytes(length);
+
+  // Place each ASCII string character in the string,
+  // right to left
+  while (true) {
+    length--;
+
+    // The ASCII value of the modulo 10 value
+    result[length] = bytes1(uint8(0x30 + (value % 10)));
+
+    value /= 10;
+
+    if (length == 0) {
+      break;
+    }
+  }
+
+  return string(result);
+}
+
 contract Uppsala {
   address public admin; // recommended a multi-sig address
 
@@ -28,8 +64,9 @@ contract Uppsala {
     _;
   }
 
-  modifier onlyUsers() {
-    require(users[msg.sender] == true, "Only registered users can call");
+  modifier onlyUsers(string calldata message, SignatureExpanded calldata sig) {
+    address sender = _ecrecover(message, sig.v, sig.r, sig.s);
+    require(users[sender] == true, "Only registered users can call");
     _;
   }
 
@@ -55,12 +92,19 @@ contract Uppsala {
     emit AddUser(_user);
   }
 
-
-  function checkCryptoAddr(address _cryptoAddr) public view onlyUsers returns (STIX_CRYPTO_ADDR memory) {
+  function checkCryptoAddr(
+    address _cryptoAddr,
+    string calldata message,
+    SignatureExpanded calldata sig
+  ) public view onlyUsers(message, sig) returns (STIX_CRYPTO_ADDR memory) {
     return dataAddr[_cryptoAddr];
   }
 
-  function checkAddr(string memory _addr) public view onlyUsers returns (STIX_ADDR memory) {
+  function checkAddr(
+    string memory _addr,
+    string calldata message,
+    SignatureExpanded calldata sig
+  ) public view onlyUsers(message, sig) returns (STIX_ADDR memory) {
     return dataUrl[_addr];
   }
 
@@ -103,5 +147,22 @@ contract Uppsala {
     });
 
     emit SetUrlData(_addr);
+  }
+
+  function _ecrecover(
+    string memory message,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) internal pure returns (address) {
+    bytes memory prefixedMessage = abi.encodePacked(
+      "\x19Ethereum Signed Message:\n",
+      itoa(bytes(message).length),
+      message
+    );
+
+    bytes32 digest = keccak256(prefixedMessage);
+
+    return ecrecover(digest, v, r, s);
   }
 }
