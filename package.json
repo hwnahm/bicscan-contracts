@@ -6,7 +6,8 @@
   "scripts": {
     "compile": "hardhat compile",
     "prettier": "prettier --write --plugin=prettier-plugin-solidity 'contracts/**/*.sol'",
-    "deploy:sepolia": "hardhat ignition deploy ./ignition/modules/Uppsala.ts --network sepolia --verify"
+    "deploy:sepolia": "hardhat ignition deploy ./ignition/modules/Uppsala.ts --network sepolia --verify",
+    "deployv2:sepolia": "hardhat ignition deploy ./ignition/modules/UppsalaV2.ts --network sepolia --verify"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "^4.9.6",
